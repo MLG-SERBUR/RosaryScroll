@@ -50,25 +50,6 @@
                         </ItemsPanelTemplate>
                     </FlipView.ItemsPanel>
                 </FlipView>
-                <Border Background="#B0000000"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Padding="22,14"
-                        Margin="0,72,0,0"
-                        Visibility="{Binding ControlsVisibility}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Name}"
-                                   Foreground="White"
-                                   FontSize="24"
-                                   FontWeight="SemiBold"
-                                   TextWrapping="Wrap" />
-                        <TextBlock Text="Swipe up for images. Swipe right for next mystery."
-                                   Foreground="#DDFFFFFF"
-                                   FontSize="15"
-                                   Margin="0,4,0,0"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -109,6 +90,13 @@
                            FontSize="22"
                            FontWeight="SemiBold"
                            TextWrapping="NoWrap" />
+                <TextBlock x:Name="InstructionText"
+                           Text="Swipe up for images. Swipe right for next mystery."
+                           Foreground="#CCCCCC"
+                           FontSize="14"
+                           Margin="0,2,0,0"
+                           TextWrapping="NoWrap"
+                           Visibility="Collapsed" />
                 <TextBlock x:Name="ProgressText"
                            Text="Joyful Mystery 1 of 5"
                            Foreground="#CCCCCC"

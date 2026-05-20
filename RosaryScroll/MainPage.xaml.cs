@@ -180,7 +180,7 @@ namespace RosaryScroll
 
         private void UpdateHeader()
         {
-            if (TitleText == null || ProgressText == null || _mysteries == null || _prayerSlides == null || _prayerSlides.Count == 0)
+            if (TitleText == null || ProgressText == null || InstructionText == null || _mysteries == null || _prayerSlides == null || _prayerSlides.Count == 0)
             {
                 return;
             }
@@ -191,6 +191,7 @@ namespace RosaryScroll
                 RosaryImage slide = _prayerSlides[selected];
                 TitleText.Text = slide.MysteryName;
                 ProgressText.Text = _setName + " - Hail Mary " + slide.DecadePrayerNumber + " of 10 - bead " + (selected + 1) + " of " + _prayerSlides.Count;
+                InstructionText.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -198,6 +199,7 @@ namespace RosaryScroll
                 MysteryGroup mystery = _mysteries[selected];
                 TitleText.Text = mystery.Name;
                 ProgressText.Text = "Mystery " + (selected + 1) + " of " + _mysteries.Count + " - browse images";
+                InstructionText.Visibility = Visibility.Visible;
             }
         }
     }

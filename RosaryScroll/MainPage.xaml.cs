@@ -23,7 +23,7 @@ namespace RosaryScroll
             _prayerSlides = RosaryData.CreatePrayerSlides(_mysteries, _setName);
 
             PrayerFlipView.ItemsSource = _prayerSlides;
-            MysteryFlipView.ItemsSource = _mysteries;
+            MysteryFlipView.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
             UpdateHeader();
         }
 
@@ -42,6 +42,8 @@ namespace RosaryScroll
                 _prayerSlides = RosaryData.CreatePrayerSlides(_mysteries, _setName);
                 PrayerFlipView.ItemsSource = _prayerSlides;
                 PrayerFlipView.SelectedIndex = 0;
+                MysteryFlipView.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
+                MysteryFlipView.SelectedIndex = 0;
                 UpdateHeader();
             }
         }
@@ -75,6 +77,42 @@ namespace RosaryScroll
                 return;
             }
 
+            if (IsPrayerMode)
+            {
+                var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
+                int mysteryIndex = MysteryFlipView.SelectedIndex;
+                if (currentSetMysteries != null && mysteryIndex >= 0 && mysteryIndex < currentSetMysteries.Count)
+                {
+                    int browseImageIndex = currentSetMysteries[mysteryIndex].ActiveImageIndex;
+                    int beadIndex = System.Math.Min(browseImageIndex, 9);
+                    int prayerIndex = mysteryIndex * 10 + beadIndex;
+                    if (prayerIndex >= 0 && prayerIndex < _prayerSlides.Count)
+                    {
+                        PrayerFlipView.SelectedIndex = prayerIndex;
+                    }
+                }
+            }
+            else
+            {
+                int prayerIndex = PrayerFlipView.SelectedIndex;
+                if (prayerIndex >= 0)
+                {
+                    int mysteryIndex = prayerIndex / 10;
+                    int beadIndex = prayerIndex % 10;
+
+                    var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
+                    if (currentSetMysteries != null && mysteryIndex >= 0 && mysteryIndex < currentSetMysteries.Count)
+                    {
+                        int availableCount = currentSetMysteries[mysteryIndex].Images.Count;
+                        if (availableCount > 0)
+                        {
+                            currentSetMysteries[mysteryIndex].ActiveImageIndex = beadIndex % availableCount;
+                        }
+                        MysteryFlipView.SelectedIndex = mysteryIndex;
+                    }
+                }
+            }
+
             PrayerFlipView.Visibility = IsPrayerMode ? Visibility.Visible : Visibility.Collapsed;
             MysteryFlipView.Visibility = IsPrayerMode ? Visibility.Collapsed : Visibility.Visible;
             UpdateHeader();
@@ -93,6 +131,22 @@ namespace RosaryScroll
         private void MysteryFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateHeader();
+        }
+
+        private void MysteryImageFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var flipView = sender as FlipView;
+            var mystery = flipView?.DataContext as MysteryGroup;
+            if (flipView == null || mystery == null || mystery.Images == null || mystery.Images.Count == 0)
+            {
+                return;
+            }
+
+            if (flipView.SelectedIndex >= mystery.Images.Count)
+            {
+                mystery.ActiveImageIndex = 0;
+                flipView.SelectedIndex = 0;
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -148,6 +202,13 @@ namespace RosaryScroll
                 foreach (var m in _mysteries)
                 {
                     m.ControlsVisibility = _uiVisibility;
+                    if (m.Images != null)
+                    {
+                        foreach (var img in m.Images)
+                        {
+                            img.ControlsVisibility = _uiVisibility;
+                        }
+                    }
                 }
             }
 
@@ -196,9 +257,13 @@ namespace RosaryScroll
             else
             {
                 int selected = MysteryFlipView.SelectedIndex < 0 ? 0 : MysteryFlipView.SelectedIndex;
-                MysteryGroup mystery = _mysteries[selected];
-                TitleText.Text = mystery.Name;
-                ProgressText.Text = "Mystery " + (selected + 1) + " of " + _mysteries.Count + " - browse images";
+                var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
+                if (currentSetMysteries != null && selected >= 0 && selected < currentSetMysteries.Count)
+                {
+                    MysteryGroup mystery = currentSetMysteries[selected];
+                    TitleText.Text = mystery.Name;
+                    ProgressText.Text = "Mystery " + (selected + 1) + " of " + currentSetMysteries.Count + " - browse images";
+                }
                 InstructionText.Visibility = Visibility.Visible;
             }
         }

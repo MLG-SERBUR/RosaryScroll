@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -13,6 +14,7 @@ namespace RosaryScroll
         public string Name { get; set; }
         public string SetName { get; set; }
         public List<RosaryImage> Images { get; set; }
+        public List<RosaryImage> BrowseImages { get; set; }
 
         private Visibility _controlsVisibility = Visibility.Collapsed;
         public Visibility ControlsVisibility
@@ -24,6 +26,20 @@ namespace RosaryScroll
                 {
                     _controlsVisibility = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ControlsVisibility)));
+                }
+            }
+        }
+
+        private int _activeImageIndex = 0;
+        public int ActiveImageIndex
+        {
+            get { return _activeImageIndex; }
+            set
+            {
+                if (_activeImageIndex != value)
+                {
+                    _activeImageIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveImageIndex)));
                 }
             }
         }
@@ -99,9 +115,18 @@ namespace RosaryScroll
                     continue;
                 }
 
+                int availableCount = mystery.Images.Count;
                 for (int bead = 0; bead < 10; bead++)
                 {
-                    slides.Add(mystery.Images[bead]);
+                    var baseImage = mystery.Images[bead % availableCount];
+                    slides.Add(new RosaryImage
+                    {
+                        MysteryName = mystery.Name,
+                        PrayerLabel = setName + " Mystery - Hail Mary " + (bead + 1) + " of 10",
+                        ImageUri = baseImage.ImageUri,
+                        ImageSource = baseImage.ImageSource,
+                        DecadePrayerNumber = bead + 1
+                    });
                 }
             }
 
@@ -114,20 +139,52 @@ namespace RosaryScroll
             {
                 Name = name,
                 SetName = setName,
-                Images = new List<RosaryImage>()
+                Images = new List<RosaryImage>(),
+                BrowseImages = new List<RosaryImage>()
             };
 
-            for (int bead = 1; bead <= 10; bead++)
+            string installPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+            string mysteriesFolder = Path.Combine(installPath, "Assets", "Mysteries");
+            if (!Directory.Exists(mysteriesFolder))
             {
-                string imageUri = "ms-appx:///Assets/Mysteries/" + filePrefix + "-" + bead.ToString("00") + ".jpg";
+                mysteriesFolder = Path.Combine(installPath, "RosaryScroll", "Assets", "Mysteries");
+            }
+
+            for (int bead = 1; bead <= 30; bead++)
+            {
+                string filename = filePrefix + "-" + bead.ToString("00") + ".jpg";
+                string fullPath = Path.Combine(mysteriesFolder, filename);
+                if (File.Exists(fullPath))
+                {
+                    string imageUri = "ms-appx:///Assets/Mysteries/" + filename;
+                    mystery.Images.Add(new RosaryImage
+                    {
+                        MysteryName = name,
+                        PrayerLabel = setName + " Mystery - Artwork " + bead,
+                        ImageUri = imageUri,
+                        ImageSource = new BitmapImage(new Uri(imageUri)),
+                        DecadePrayerNumber = bead
+                    });
+                }
+            }
+
+            if (mystery.Images.Count == 0)
+            {
+                string fallbackUri = "ms-appx:///Assets/Mysteries/" + filePrefix + "-01.jpg";
                 mystery.Images.Add(new RosaryImage
                 {
                     MysteryName = name,
-                    PrayerLabel = setName + " Mystery - Hail Mary " + bead + " of 10",
-                    ImageUri = imageUri,
-                    ImageSource = new BitmapImage(new Uri(imageUri)),
-                    DecadePrayerNumber = bead
+                    PrayerLabel = setName + " Mystery - Artwork 1",
+                    ImageUri = fallbackUri,
+                    ImageSource = new BitmapImage(new Uri(fallbackUri)),
+                    DecadePrayerNumber = 1
                 });
+            }
+
+            mystery.BrowseImages.AddRange(mystery.Images);
+            if (mystery.Images.Count > 1)
+            {
+                mystery.BrowseImages.Add(mystery.Images[0]);
             }
 
             mysteries.Add(mystery);

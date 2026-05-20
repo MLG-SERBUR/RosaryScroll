@@ -14,10 +14,22 @@
     <Page.Resources>
         <DataTemplate x:Key="PrayerSlideTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <Image Source="{Binding ImageSource}"
-                       Stretch="UniformToFill"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch" />
+                <ScrollViewer x:Name="ImageScrollViewer"
+                              ZoomMode="Enabled"
+                              MinZoomFactor="1"
+                              MaxZoomFactor="5"
+                              HorizontalScrollMode="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollMode="Auto"
+                              VerticalScrollBarVisibility="Auto">
+                    <Grid Width="{Binding ViewportWidth, ElementName=ImageScrollViewer}"
+                          Height="{Binding ViewportHeight, ElementName=ImageScrollViewer}">
+                        <Image Source="{Binding ImageSource}"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch" />
+                    </Grid>
+                </ScrollViewer>
                 <Border Background="#B0000000"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Bottom"
@@ -41,8 +53,10 @@
 
         <DataTemplate x:Key="MysteryTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <FlipView ItemsSource="{Binding Images}"
+                <FlipView ItemsSource="{Binding BrowseImages}"
                           ItemTemplate="{StaticResource PrayerSlideTemplate}"
+                          SelectedIndex="{Binding ActiveImageIndex, Mode=TwoWay}"
+                          SelectionChanged="MysteryImageFlipView_SelectionChanged"
                           UseTouchAnimationsForAllNavigation="True">
                     <FlipView.ItemsPanel>
                         <ItemsPanelTemplate>

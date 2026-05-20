@@ -9,11 +9,11 @@
     Loaded="Page_Loaded"
     IsTabStop="True"
     KeyDown="Page_KeyDown"
-    Background="#111111">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <DataTemplate x:Key="PrayerSlideTemplate">
-            <Grid Background="#111111">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Image Source="{Binding ImageSource}"
                        Stretch="UniformToFill"
                        HorizontalAlignment="Stretch"
@@ -40,7 +40,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MysteryTemplate">
-            <Grid Background="#111111">
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <FlipView ItemsSource="{Binding Images}"
                           ItemTemplate="{StaticResource PrayerSlideTemplate}"
                           UseTouchAnimationsForAllNavigation="True">
@@ -124,19 +124,14 @@
                           VerticalScrollBarVisibility="Disabled">
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
+                    <Button x:Name="BackButton"
+                            Content="Back"
+                            Margin="0,0,8,0"
+                            Click="BackButton_Click" />
                     <Button x:Name="PreviousButton"
                             Content="Prev"
                             Margin="0,0,8,0"
                             Click="PreviousButton_Click" />
-                    <ComboBox x:Name="SetComboBox"
-                              Width="132"
-                              Margin="0,0,8,0"
-                              SelectionChanged="SetComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Joyful" IsSelected="True" />
-                        <ComboBoxItem Content="Luminous" />
-                        <ComboBoxItem Content="Sorrowful" />
-                        <ComboBoxItem Content="Glorious" />
-                    </ComboBox>
                     <ComboBox x:Name="ModeComboBox"
                               Width="166"
                               Margin="0,0,8,0"

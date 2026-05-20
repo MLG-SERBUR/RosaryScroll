@@ -1,0 +1,141 @@
+<Page
+    x:Class="RosaryScroll.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RosaryScroll"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <Style x:Key="HubTileButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#222222" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Pivot Title="RosaryScroll">
+
+            <!-- Today's Rosary Section -->
+            <PivotItem Header="today's rosary" Margin="24,0,24,0">
+                <Button x:Name="TodayTile"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        Height="200"
+                        Padding="0"
+                        Style="{StaticResource HubTileButtonStyle}"
+                        Click="TodayTile_Click">
+                    <Grid>
+                        <Image x:Name="TodayImage"
+                               Stretch="UniformToFill"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                        <Border Background="#90000000"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+                        <StackPanel VerticalAlignment="Bottom"
+                                    Padding="20,16">
+                            <TextBlock x:Name="TodaySetName"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="TodayDayLabel"
+                                       Foreground="#BBFFFFFF"
+                                       FontSize="15"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+            </PivotItem>
+
+            <!-- Mysteries Section -->
+            <PivotItem Header="mysteries" Margin="24,0,24,0">
+                <StackPanel Margin="0,12,0,0">
+                    <Button Tag="Joyful"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="0,12"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="MysteryTile_Click">
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Joyful"
+                                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                       FontSize="24"
+                                       FontWeight="Light" />
+                            <TextBlock Text="Monday &amp; Saturday"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       FontSize="15" />
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="Luminous"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="0,12"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="MysteryTile_Click">
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Luminous"
+                                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                       FontSize="24"
+                                       FontWeight="Light" />
+                            <TextBlock Text="Thursday"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       FontSize="15" />
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="Sorrowful"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="0,12"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="MysteryTile_Click">
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Sorrowful"
+                                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                       FontSize="24"
+                                       FontWeight="Light" />
+                            <TextBlock Text="Tuesday &amp; Friday"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       FontSize="15" />
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="Glorious"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="0,12"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="MysteryTile_Click">
+                        <StackPanel HorizontalAlignment="Stretch">
+                            <TextBlock Text="Glorious"
+                                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                       FontSize="24"
+                                       FontWeight="Light" />
+                            <TextBlock Text="Wednesday &amp; Sunday"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                       FontSize="15" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </PivotItem>
+
+        </Pivot>
+    </Grid>
+
+</Page>

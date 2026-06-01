@@ -30,19 +30,17 @@
                                VerticalAlignment="Stretch" />
                     </Grid>
                 </ScrollViewer>
-                <Border Background="#B0000000"
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Bottom"
                         Padding="24,18"
                         Visibility="{Binding ControlsVisibility}">
                     <StackPanel>
                         <TextBlock Text="{Binding MysteryName}"
-                                   Foreground="White"
                                    FontSize="28"
                                    FontWeight="SemiBold"
                                    TextWrapping="Wrap" />
                         <TextBlock Text="{Binding PrayerLabel}"
-                                   Foreground="#DDFFFFFF"
                                    FontSize="18"
                                    Margin="0,4,0,0"
                                    TextWrapping="Wrap" />
@@ -81,15 +79,20 @@
             </FlipView.ItemsPanel>
         </FlipView>
 
-        <FlipView x:Name="MysteryFlipView"
-                  ItemTemplate="{StaticResource MysteryTemplate}"
-                  SelectionChanged="MysteryFlipView_SelectionChanged"
-                  Visibility="Collapsed"
-                  UseTouchAnimationsForAllNavigation="True"
-                  Tapped="FlipView_Tapped" />
+        <Pivot x:Name="MysteryPivot"
+               ItemTemplate="{StaticResource MysteryTemplate}"
+               SelectionChanged="MysteryPivot_SelectionChanged"
+               Visibility="Collapsed"
+               Tapped="FlipView_Tapped">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <Grid Width="0" Height="0" />
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+        </Pivot>
 
         <Grid x:Name="TopControlsGrid"
-              Background="#E6000000"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               Padding="16,12"
               VerticalAlignment="Top"
               Visibility="Collapsed">
@@ -100,20 +103,17 @@
             <StackPanel>
                 <TextBlock x:Name="TitleText"
                            Text="RosaryScroll"
-                           Foreground="White"
                            FontSize="22"
                            FontWeight="SemiBold"
                            TextWrapping="NoWrap" />
                 <TextBlock x:Name="InstructionText"
                            Text="Swipe up for images. Swipe right for next mystery."
-                           Foreground="#CCCCCC"
                            FontSize="14"
                            Margin="0,2,0,0"
                            TextWrapping="NoWrap"
                            Visibility="Collapsed" />
                 <TextBlock x:Name="ProgressText"
                            Text="Joyful Mystery 1 of 5"
-                           Foreground="#CCCCCC"
                            FontSize="14"
                            Margin="0,2,0,0"
                            TextWrapping="NoWrap" />
@@ -138,8 +138,8 @@
                               Width="166"
                               Margin="0,0,8,0"
                               SelectionChanged="ModeComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Rosary Progress" IsSelected="True" />
-                        <ComboBoxItem Content="Mystery Browse" />
+                        <ComboBoxItem Content="Rosary Progress" />
+                        <ComboBoxItem Content="Mystery Browse" IsSelected="True" />
                     </ComboBox>
                     <Button x:Name="NextButton"
                             Content="Next"

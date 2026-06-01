@@ -23,7 +23,9 @@ namespace RosaryScroll
             _prayerSlides = RosaryData.CreatePrayerSlides(_mysteries, _setName);
 
             PrayerFlipView.ItemsSource = _prayerSlides;
-            MysteryFlipView.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
+            MysteryPivot.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
+            PrayerFlipView.Visibility = Visibility.Collapsed;
+            MysteryPivot.Visibility = Visibility.Visible;
             UpdateHeader();
         }
 
@@ -42,8 +44,8 @@ namespace RosaryScroll
                 _prayerSlides = RosaryData.CreatePrayerSlides(_mysteries, _setName);
                 PrayerFlipView.ItemsSource = _prayerSlides;
                 PrayerFlipView.SelectedIndex = 0;
-                MysteryFlipView.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
-                MysteryFlipView.SelectedIndex = 0;
+                MysteryPivot.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
+                MysteryPivot.SelectedIndex = 0;
                 UpdateHeader();
             }
         }
@@ -72,15 +74,15 @@ namespace RosaryScroll
 
         private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PrayerFlipView == null || MysteryFlipView == null)
+            if (PrayerFlipView == null || MysteryPivot == null)
             {
                 return;
             }
 
             if (IsPrayerMode)
             {
-                var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
-                int mysteryIndex = MysteryFlipView.SelectedIndex;
+                var currentSetMysteries = MysteryPivot.ItemsSource as List<MysteryGroup>;
+                int mysteryIndex = MysteryPivot.SelectedIndex;
                 if (currentSetMysteries != null && mysteryIndex >= 0 && mysteryIndex < currentSetMysteries.Count)
                 {
                     int browseImageIndex = currentSetMysteries[mysteryIndex].ActiveImageIndex;
@@ -100,7 +102,7 @@ namespace RosaryScroll
                     int mysteryIndex = prayerIndex / 10;
                     int beadIndex = prayerIndex % 10;
 
-                    var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
+                    var currentSetMysteries = MysteryPivot.ItemsSource as List<MysteryGroup>;
                     if (currentSetMysteries != null && mysteryIndex >= 0 && mysteryIndex < currentSetMysteries.Count)
                     {
                         int availableCount = currentSetMysteries[mysteryIndex].Images.Count;
@@ -108,13 +110,13 @@ namespace RosaryScroll
                         {
                             currentSetMysteries[mysteryIndex].ActiveImageIndex = beadIndex % availableCount;
                         }
-                        MysteryFlipView.SelectedIndex = mysteryIndex;
+                        MysteryPivot.SelectedIndex = mysteryIndex;
                     }
                 }
             }
 
             PrayerFlipView.Visibility = IsPrayerMode ? Visibility.Visible : Visibility.Collapsed;
-            MysteryFlipView.Visibility = IsPrayerMode ? Visibility.Collapsed : Visibility.Visible;
+            MysteryPivot.Visibility = IsPrayerMode ? Visibility.Collapsed : Visibility.Visible;
             UpdateHeader();
         }
 
@@ -128,7 +130,7 @@ namespace RosaryScroll
             UpdateHeader();
         }
 
-        private void MysteryFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MysteryPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateHeader();
         }
@@ -223,19 +225,28 @@ namespace RosaryScroll
 
         private void MoveBy(int delta)
         {
-            FlipView active = IsPrayerMode ? PrayerFlipView : MysteryFlipView;
-            int nextIndex = active.SelectedIndex + delta;
+            int selectedIndex = IsPrayerMode ? PrayerFlipView.SelectedIndex : MysteryPivot.SelectedIndex;
+            int itemCount = IsPrayerMode ? PrayerFlipView.Items.Count : MysteryPivot.Items.Count;
+            int nextIndex = selectedIndex + delta;
 
             if (nextIndex < 0)
             {
                 nextIndex = 0;
             }
-            else if (nextIndex >= active.Items.Count)
+            else if (nextIndex >= itemCount)
             {
-                nextIndex = active.Items.Count - 1;
+                nextIndex = itemCount - 1;
             }
 
-            active.SelectedIndex = nextIndex;
+            if (IsPrayerMode)
+            {
+                PrayerFlipView.SelectedIndex = nextIndex;
+            }
+            else
+            {
+                MysteryPivot.SelectedIndex = nextIndex;
+            }
+
             UpdateHeader();
         }
 
@@ -256,8 +267,8 @@ namespace RosaryScroll
             }
             else
             {
-                int selected = MysteryFlipView.SelectedIndex < 0 ? 0 : MysteryFlipView.SelectedIndex;
-                var currentSetMysteries = MysteryFlipView.ItemsSource as List<MysteryGroup>;
+                int selected = MysteryPivot.SelectedIndex < 0 ? 0 : MysteryPivot.SelectedIndex;
+                var currentSetMysteries = MysteryPivot.ItemsSource as List<MysteryGroup>;
                 if (currentSetMysteries != null && selected >= 0 && selected < currentSetMysteries.Count)
                 {
                     MysteryGroup mystery = currentSetMysteries[selected];

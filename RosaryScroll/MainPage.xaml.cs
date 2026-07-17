@@ -69,17 +69,32 @@ namespace RosaryScroll
 
         private bool IsPrayerMode
         {
-            get { return ModeComboBox.SelectedIndex == 0; }
+            get { return ModeToggleButton == null || ModeToggleButton.IsChecked != true; }
         }
 
-        private void ModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ModeToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (PrayerFlipView == null || MysteryPivot == null)
+            ApplyMode(!IsPrayerMode);
+        }
+
+        private void ModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyMode(!IsPrayerMode);
+        }
+
+        private void ApplyMode(bool prayerMode)
+        {
+            if (PrayerFlipView == null || MysteryPivot == null || ModeToggleButton == null)
             {
                 return;
             }
 
-            if (IsPrayerMode)
+            ModeToggleButton.IsChecked = !prayerMode;
+            ModeToggleButton.Label = prayerMode ? "Mystery Browse" : "Rosary Progress";
+            PrayerFlipView.Visibility = prayerMode ? Visibility.Visible : Visibility.Collapsed;
+            MysteryPivot.Visibility = prayerMode ? Visibility.Collapsed : Visibility.Visible;
+
+            if (prayerMode)
             {
                 var currentSetMysteries = MysteryPivot.ItemsSource as List<MysteryGroup>;
                 int mysteryIndex = MysteryPivot.SelectedIndex;
@@ -114,9 +129,6 @@ namespace RosaryScroll
                     }
                 }
             }
-
-            PrayerFlipView.Visibility = IsPrayerMode ? Visibility.Visible : Visibility.Collapsed;
-            MysteryPivot.Visibility = IsPrayerMode ? Visibility.Collapsed : Visibility.Visible;
             UpdateHeader();
         }
 
@@ -159,12 +171,12 @@ namespace RosaryScroll
             }
         }
 
-        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        private void PreviousMysteryButton_Click(object sender, RoutedEventArgs e)
         {
             MoveBy(-1);
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
+        private void NextMysteryButton_Click(object sender, RoutedEventArgs e)
         {
             MoveBy(1);
         }
@@ -194,11 +206,14 @@ namespace RosaryScroll
         private void FlipView_Tapped(object sender, TappedRoutedEventArgs e)
         {
             _uiVisibility = _uiVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            if (TopControlsGrid != null)
+            if (TopOverlayGrid != null)
             {
-                TopControlsGrid.Visibility = _uiVisibility;
+                TopOverlayGrid.Visibility = _uiVisibility;
             }
-
+            if (ProgressText != null)
+            {
+                ProgressText.Visibility = _uiVisibility;
+            }
             if (_mysteries != null)
             {
                 foreach (var m in _mysteries)
@@ -263,7 +278,7 @@ namespace RosaryScroll
                 RosaryImage slide = _prayerSlides[selected];
                 TitleText.Text = slide.MysteryName;
                 ProgressText.Text = _setName + " - Hail Mary " + slide.DecadePrayerNumber + " of 10 - bead " + (selected + 1) + " of " + _prayerSlides.Count;
-                InstructionText.Visibility = Visibility.Collapsed;
+                InstructionText.Text = "Swipe up for images.";
             }
             else
             {
@@ -273,10 +288,13 @@ namespace RosaryScroll
                 {
                     MysteryGroup mystery = currentSetMysteries[selected];
                     TitleText.Text = mystery.Name;
-                    ProgressText.Text = "Mystery " + (selected + 1) + " of " + currentSetMysteries.Count + " - browse images";
+                    ProgressText.Text = "Mystery " + (selected + 1) + " of " + currentSetMysteries.Count;
                 }
-                InstructionText.Visibility = Visibility.Visible;
+                InstructionText.Text = "Swipe up for images.";
             }
+
+            ProgressText.Visibility = _uiVisibility;
+            InstructionText.Visibility = _uiVisibility;
         }
     }
 }

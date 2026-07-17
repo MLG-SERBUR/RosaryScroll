@@ -13,13 +13,15 @@ namespace RosaryScroll
         private readonly List<MysteryGroup> _mysteries;
         private Visibility _uiVisibility = Visibility.Collapsed;
         private string _setName = "Joyful";
+        private List<MysteryGroup> _currentSetMysteries;
+        private int _currentMysteryIndex;
 
         public MainPage()
         {
             InitializeComponent();
 
             _mysteries = RosaryData.CreateMysteries();
-            MysteryPivot.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
+            SetMysterySet(_setName);
             UpdateHeader();
         }
 
@@ -35,8 +37,7 @@ namespace RosaryScroll
             if (e.Parameter is string setName && !string.IsNullOrEmpty(setName))
             {
                 _setName = setName;
-                MysteryPivot.ItemsSource = _mysteries.FindAll(m => m.SetName == _setName);
-                MysteryPivot.SelectedIndex = 0;
+                SetMysterySet(_setName);
                 UpdateHeader();
             }
         }
@@ -61,11 +62,6 @@ namespace RosaryScroll
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Focus(FocusState.Programmatic);
-        }
-
-        private void MysteryPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateHeader();
         }
 
         private void PreviousMysteryButton_Click(object sender, RoutedEventArgs e)
@@ -111,9 +107,13 @@ namespace RosaryScroll
 
         private void MoveBy(int delta)
         {
-            int selectedIndex = MysteryPivot.SelectedIndex;
-            int itemCount = MysteryPivot.Items.Count;
-            int nextIndex = selectedIndex + delta;
+            int itemCount = _currentSetMysteries == null ? 0 : _currentSetMysteries.Count;
+            int nextIndex = _currentMysteryIndex + delta;
+
+            if (itemCount == 0)
+            {
+                return;
+            }
 
             if (nextIndex < 0)
             {
@@ -124,9 +124,7 @@ namespace RosaryScroll
                 nextIndex = itemCount - 1;
             }
 
-            MysteryPivot.SelectedIndex = nextIndex;
-
-            UpdateHeader();
+            ShowMystery(nextIndex);
         }
 
         private void UpdateHeader()
@@ -136,14 +134,30 @@ namespace RosaryScroll
                 return;
             }
 
-            int selected = MysteryPivot.SelectedIndex < 0 ? 0 : MysteryPivot.SelectedIndex;
-            var currentSetMysteries = MysteryPivot.ItemsSource as List<MysteryGroup>;
-            if (currentSetMysteries != null && selected >= 0 && selected < currentSetMysteries.Count)
+            if (_currentSetMysteries != null && _currentMysteryIndex >= 0 && _currentMysteryIndex < _currentSetMysteries.Count)
             {
-                MysteryGroup mystery = currentSetMysteries[selected];
+                MysteryGroup mystery = _currentSetMysteries[_currentMysteryIndex];
                 TitleText.Text = mystery.Name;
-                ProgressText.Text = "Mystery " + (selected + 1) + " of " + currentSetMysteries.Count;
+                ProgressText.Text = "Mystery " + (_currentMysteryIndex + 1) + " of " + _currentSetMysteries.Count;
             }
+        }
+
+        private void SetMysterySet(string setName)
+        {
+            _currentSetMysteries = _mysteries.FindAll(m => m.SetName == setName);
+            ShowMystery(0);
+        }
+
+        private void ShowMystery(int index)
+        {
+            if (_currentSetMysteries == null || index < 0 || index >= _currentSetMysteries.Count)
+            {
+                return;
+            }
+
+            _currentMysteryIndex = index;
+            MysteryContent.Content = _currentSetMysteries[index];
+            UpdateHeader();
         }
     }
 }

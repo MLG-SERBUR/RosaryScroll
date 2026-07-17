@@ -35,9 +35,10 @@
 
         <DataTemplate x:Key="MysteryTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <FlipView ItemsSource="{Binding Images}"
+                <FlipView ItemsSource="{Binding LoopingImages}"
                           ItemTemplate="{StaticResource ImageTemplate}"
                           SelectedIndex="{Binding ActiveImageIndex, Mode=TwoWay}"
+                          SelectionChanged="MysteryImageFlipView_SelectionChanged"
                           UseTouchAnimationsForAllNavigation="True">
                     <FlipView.ItemsPanel>
                         <ItemsPanelTemplate>

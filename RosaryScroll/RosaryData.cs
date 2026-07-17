@@ -14,6 +14,7 @@ namespace RosaryScroll
         public string Name { get; set; }
         public string SetName { get; set; }
         public List<RosaryImage> Images { get; set; }
+        public List<RosaryImage> LoopingImages { get; set; }
         private int _activeImageIndex = 0;
         public int ActiveImageIndex
         {
@@ -75,7 +76,8 @@ namespace RosaryScroll
             {
                 Name = name,
                 SetName = setName,
-                Images = new List<RosaryImage>()
+                Images = new List<RosaryImage>(),
+                LoopingImages = new List<RosaryImage>()
             };
 
             string installPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
@@ -110,6 +112,12 @@ namespace RosaryScroll
                     ImageUri = fallbackUri,
                     ImageSource = new BitmapImage(new Uri(fallbackUri))
                 });
+            }
+
+            mystery.LoopingImages.AddRange(mystery.Images);
+            if (mystery.Images.Count > 1)
+            {
+                mystery.LoopingImages.Add(mystery.Images[0]);
             }
 
             mysteries.Add(mystery);

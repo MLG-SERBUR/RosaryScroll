@@ -141,6 +141,22 @@ namespace RosaryScroll
             MysteryFlipView.CancelDirectManipulations();
         }
 
+        private void MysteryImageFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var imageFlipView = sender as FlipView;
+            var mystery = imageFlipView?.DataContext as MysteryGroup;
+            if (imageFlipView == null || mystery == null || mystery.Images.Count == 0)
+            {
+                return;
+            }
+
+            if (imageFlipView.SelectedIndex >= mystery.Images.Count)
+            {
+                mystery.ActiveImageIndex = 0;
+                imageFlipView.SelectedIndex = 0;
+            }
+        }
+
         private void UpdateHeader()
         {
             if (TitleText == null || ProgressText == null || InstructionText == null || _mysteries == null)

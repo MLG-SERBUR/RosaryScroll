@@ -4,7 +4,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace RosaryScroll
@@ -16,7 +15,6 @@ namespace RosaryScroll
         private string _setName = "Joyful";
         private List<MysteryGroup> _currentSetMysteries;
         private int _currentMysteryIndex;
-        private Storyboard _mysteryTransition;
 
         public MainPage()
         {
@@ -129,6 +127,15 @@ namespace RosaryScroll
             ShowMystery(nextIndex);
         }
 
+        private void MysteryFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (MysteryFlipView.SelectedIndex >= 0)
+            {
+                _currentMysteryIndex = MysteryFlipView.SelectedIndex;
+                UpdateHeader();
+            }
+        }
+
         private void UpdateHeader()
         {
             if (TitleText == null || ProgressText == null || InstructionText == null || _mysteries == null)
@@ -148,8 +155,8 @@ namespace RosaryScroll
         {
             _currentSetMysteries = _mysteries.FindAll(m => m.SetName == setName);
             _currentMysteryIndex = 0;
-            MysteryContentTransform.X = 0;
-            MysteryContent.Content = _currentSetMysteries.Count > 0 ? _currentSetMysteries[0] : null;
+            MysteryFlipView.ItemsSource = _currentSetMysteries;
+            MysteryFlipView.SelectedIndex = _currentSetMysteries.Count > 0 ? 0 : -1;
             UpdateHeader();
         }
 
@@ -160,55 +167,9 @@ namespace RosaryScroll
                 return;
             }
 
-            if (MysteryContent.Content == null || index == _currentMysteryIndex)
-            {
-                _currentMysteryIndex = index;
-                MysteryContent.Content = _currentSetMysteries[index];
-                UpdateHeader();
-                return;
-            }
-
-            AnimateMysteryChange(index);
-        }
-
-        private void AnimateMysteryChange(int index)
-        {
-            _mysteryTransition?.Stop();
-
-            double exitOffset = index > _currentMysteryIndex ? -120 : 120;
-            var exitAnimation = new DoubleAnimation
-            {
-                To = exitOffset,
-                Duration = new Duration(System.TimeSpan.FromMilliseconds(100))
-            };
-
-            _mysteryTransition = new Storyboard();
-            Storyboard.SetTarget(exitAnimation, MysteryContentTransform);
-            Storyboard.SetTargetProperty(exitAnimation, "X");
-            _mysteryTransition.Children.Add(exitAnimation);
-            _mysteryTransition.Completed += (sender, e) => EnterMystery(index, exitOffset);
-            _mysteryTransition.Begin();
-        }
-
-        private void EnterMystery(int index, double exitOffset)
-        {
             _currentMysteryIndex = index;
-            MysteryContent.Content = _currentSetMysteries[index];
-            MysteryContentTransform.X = -exitOffset;
+            MysteryFlipView.SelectedIndex = index;
             UpdateHeader();
-
-            var enterAnimation = new DoubleAnimation
-            {
-                To = 0,
-                Duration = new Duration(System.TimeSpan.FromMilliseconds(180)),
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-            };
-
-            _mysteryTransition = new Storyboard();
-            Storyboard.SetTarget(enterAnimation, MysteryContentTransform);
-            Storyboard.SetTargetProperty(enterAnimation, "X");
-            _mysteryTransition.Children.Add(enterAnimation);
-            _mysteryTransition.Begin();
         }
     }
 }

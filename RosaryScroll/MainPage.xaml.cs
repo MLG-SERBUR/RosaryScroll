@@ -136,6 +136,11 @@ namespace RosaryScroll
             }
         }
 
+        private void MysteryFlipView_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            MysteryFlipView.CancelDirectManipulation();
+        }
+
         private void UpdateHeader()
         {
             if (TitleText == null || ProgressText == null || InstructionText == null || _mysteries == null)

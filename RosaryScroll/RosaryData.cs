@@ -14,22 +14,6 @@ namespace RosaryScroll
         public string Name { get; set; }
         public string SetName { get; set; }
         public List<RosaryImage> Images { get; set; }
-        public List<RosaryImage> BrowseImages { get; set; }
-
-        private Visibility _controlsVisibility = Visibility.Collapsed;
-        public Visibility ControlsVisibility
-        {
-            get { return _controlsVisibility; }
-            set
-            {
-                if (_controlsVisibility != value)
-                {
-                    _controlsVisibility = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ControlsVisibility)));
-                }
-            }
-        }
-
         private int _activeImageIndex = 0;
         public int ActiveImageIndex
         {
@@ -45,29 +29,11 @@ namespace RosaryScroll
         }
     }
 
-    public sealed class RosaryImage : INotifyPropertyChanged
+    public sealed class RosaryImage
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public string MysteryName { get; set; }
-        public string PrayerLabel { get; set; }
         public string ImageUri { get; set; }
         public BitmapImage ImageSource { get; set; }
-        public int DecadePrayerNumber { get; set; }
-
-        private Visibility _controlsVisibility = Visibility.Collapsed;
-        public Visibility ControlsVisibility
-        {
-            get { return _controlsVisibility; }
-            set
-            {
-                if (_controlsVisibility != value)
-                {
-                    _controlsVisibility = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ControlsVisibility)));
-                }
-            }
-        }
     }
 
     public static class RosaryData
@@ -103,44 +69,13 @@ namespace RosaryScroll
             return mysteries;
         }
 
-        public static List<RosaryImage> CreatePrayerSlides(List<MysteryGroup> mysteries, string setName)
-        {
-            List<RosaryImage> slides = new List<RosaryImage>();
-
-            for (int index = 0; index < mysteries.Count; index++)
-            {
-                MysteryGroup mystery = mysteries[index];
-                if (mystery.SetName != setName)
-                {
-                    continue;
-                }
-
-                int availableCount = mystery.Images.Count;
-                for (int bead = 0; bead < 10; bead++)
-                {
-                    var baseImage = mystery.Images[bead % availableCount];
-                    slides.Add(new RosaryImage
-                    {
-                        MysteryName = mystery.Name,
-                        PrayerLabel = setName + " Mystery - Hail Mary " + (bead + 1) + " of 10",
-                        ImageUri = baseImage.ImageUri,
-                        ImageSource = baseImage.ImageSource,
-                        DecadePrayerNumber = bead + 1
-                    });
-                }
-            }
-
-            return slides;
-        }
-
         private static void AddMystery(List<MysteryGroup> mysteries, string setName, string name, string filePrefix)
         {
             MysteryGroup mystery = new MysteryGroup
             {
                 Name = name,
                 SetName = setName,
-                Images = new List<RosaryImage>(),
-                BrowseImages = new List<RosaryImage>()
+                Images = new List<RosaryImage>()
             };
 
             string installPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
@@ -150,9 +85,9 @@ namespace RosaryScroll
                 mysteriesFolder = Path.Combine(installPath, "RosaryScroll", "Assets", "Mysteries");
             }
 
-            for (int bead = 1; bead <= 30; bead++)
+            for (int imageNumber = 1; imageNumber <= 30; imageNumber++)
             {
-                string filename = filePrefix + "-" + bead.ToString("00") + ".jpg";
+                string filename = filePrefix + "-" + imageNumber.ToString("00") + ".jpg";
                 string fullPath = Path.Combine(mysteriesFolder, filename);
                 if (File.Exists(fullPath))
                 {
@@ -160,10 +95,8 @@ namespace RosaryScroll
                     mystery.Images.Add(new RosaryImage
                     {
                         MysteryName = name,
-                        PrayerLabel = setName + " Mystery - Artwork " + bead,
                         ImageUri = imageUri,
-                        ImageSource = new BitmapImage(new Uri(imageUri)),
-                        DecadePrayerNumber = bead
+                        ImageSource = new BitmapImage(new Uri(imageUri))
                     });
                 }
             }
@@ -174,17 +107,9 @@ namespace RosaryScroll
                 mystery.Images.Add(new RosaryImage
                 {
                     MysteryName = name,
-                    PrayerLabel = setName + " Mystery - Artwork 1",
                     ImageUri = fallbackUri,
-                    ImageSource = new BitmapImage(new Uri(fallbackUri)),
-                    DecadePrayerNumber = 1
+                    ImageSource = new BitmapImage(new Uri(fallbackUri))
                 });
-            }
-
-            mystery.BrowseImages.AddRange(mystery.Images);
-            if (mystery.Images.Count > 1)
-            {
-                mystery.BrowseImages.Add(mystery.Images[0]);
             }
 
             mysteries.Add(mystery);

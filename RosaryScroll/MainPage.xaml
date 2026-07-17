@@ -12,7 +12,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <DataTemplate x:Key="PrayerSlideTemplate">
+        <DataTemplate x:Key="ImageTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <ScrollViewer x:Name="ImageScrollViewer"
                               ZoomMode="Enabled"
@@ -30,31 +30,14 @@
                                VerticalAlignment="Stretch" />
                     </Grid>
                 </ScrollViewer>
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Bottom"
-                        Padding="24,18"
-                        Visibility="{Binding ControlsVisibility}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding MysteryName}"
-                                   FontSize="28"
-                                   FontWeight="SemiBold"
-                                   TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding PrayerLabel}"
-                                   FontSize="18"
-                                   Margin="0,4,0,0"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="MysteryTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <FlipView ItemsSource="{Binding BrowseImages}"
-                          ItemTemplate="{StaticResource PrayerSlideTemplate}"
+                <FlipView ItemsSource="{Binding Images}"
+                          ItemTemplate="{StaticResource ImageTemplate}"
                           SelectedIndex="{Binding ActiveImageIndex, Mode=TwoWay}"
-                          SelectionChanged="MysteryImageFlipView_SelectionChanged"
                           UseTouchAnimationsForAllNavigation="True">
                     <FlipView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -67,43 +50,6 @@
     </Page.Resources>
 
     <Grid>
-        <Grid x:Name="TopOverlayGrid"
-              VerticalAlignment="Top"
-              IsHitTestVisible="False"
-              Visibility="Collapsed"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-              Padding="16,12">
-            <StackPanel>
-                <TextBlock x:Name="TitleText"
-                           FontSize="22"
-                           FontWeight="SemiBold"
-                           TextWrapping="NoWrap" />
-                <TextBlock x:Name="InstructionText"
-                           FontSize="14"
-                           Margin="0,2,0,0"
-                           TextWrapping="NoWrap"
-                           Visibility="Collapsed" />
-                <TextBlock x:Name="ProgressText"
-                           FontSize="14"
-                           Margin="0,2,0,0"
-                           TextWrapping="NoWrap"
-                           Visibility="Collapsed" />
-            </StackPanel>
-        </Grid>
-
-        <FlipView x:Name="PrayerFlipView"
-                  ItemTemplate="{StaticResource PrayerSlideTemplate}"
-                  SelectionChanged="PrayerFlipView_SelectionChanged"
-                  UseTouchAnimationsForAllNavigation="True"
-                  Visibility="Collapsed"
-                  Tapped="FlipView_Tapped">
-            <FlipView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </FlipView.ItemsPanel>
-        </FlipView>
-
         <Pivot x:Name="MysteryPivot"
                ItemTemplate="{StaticResource MysteryTemplate}"
                SelectionChanged="MysteryPivot_SelectionChanged"
@@ -116,36 +62,40 @@
             </Pivot.HeaderTemplate>
         </Pivot>
 
-        <CommandBar x:Name="TopCommandBar"
-                    VerticalAlignment="Bottom"
-                    ClosedDisplayMode="Minimal"
-                    IsSticky="False"
-                    DefaultLabelPosition="Right">
-            <AppBarToggleButton x:Name="ModeToggleButton"
-                                Label="Mystery Browse"
-                                Icon="List"
-                                IsChecked="True"
-                                Click="ModeToggleButton_Click" />
-            <AppBarButton Icon="Back"
-                          Label="Back"
-                          Click="BackButton_Click" />
-            <AppBarButton Icon="Previous"
-                          Label="Prev Mystery"
-                          Click="PreviousMysteryButton_Click" />
-            <AppBarButton Icon="Next"
-                          Label="Next Mystery"
-                          Click="NextMysteryButton_Click" />
-            <AppBarButton Icon="Undo"
-                          Label="Rosary Progress"
-                          Click="ModeButton_Click" />
-            <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Previous"
-                              Label="Prev Mystery"
-                              Click="PreviousMysteryButton_Click" />
-                <AppBarButton Icon="Next"
-                              Label="Next Mystery"
-                              Click="NextMysteryButton_Click" />
-            </CommandBar.SecondaryCommands>
-        </CommandBar>
+        <Grid x:Name="TopOverlayGrid"
+              VerticalAlignment="Top"
+              Visibility="Collapsed"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock x:Name="TitleText"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           TextWrapping="NoWrap" />
+                <TextBlock x:Name="ProgressText"
+                           FontSize="14"
+                           Margin="0,2,0,0"
+                           TextWrapping="NoWrap" />
+                <TextBlock x:Name="InstructionText"
+                           FontSize="14"
+                           Margin="0,2,0,0"
+                           Text="Swipe up for images."
+                           TextWrapping="NoWrap" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button AutomationProperties.Name="Previous mystery"
+                        Click="PreviousMysteryButton_Click">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
+                <Button AutomationProperties.Name="Next mystery"
+                        Click="NextMysteryButton_Click">
+                    <SymbolIcon Symbol="Forward" />
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

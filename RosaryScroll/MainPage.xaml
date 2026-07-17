@@ -52,7 +52,11 @@
     <Grid>
         <ContentControl x:Name="MysteryContent"
                         ContentTemplate="{StaticResource MysteryTemplate}"
-                        Tapped="FlipView_Tapped" />
+                        Tapped="FlipView_Tapped">
+            <ContentControl.RenderTransform>
+                <TranslateTransform x:Name="MysteryContentTransform" />
+            </ContentControl.RenderTransform>
+        </ContentControl>
 
         <Grid x:Name="TopOverlayGrid"
               VerticalAlignment="Top"

@@ -138,7 +138,7 @@ namespace RosaryScroll
 
         private void MysteryFlipView_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            MysteryFlipView.CancelDirectManipulation();
+            MysteryFlipView.CancelDirectManipulations();
         }
 
         private void UpdateHeader()

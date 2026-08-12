@@ -51,13 +51,9 @@
     </Page.Resources>
 
     <Grid>
-        <FlipView x:Name="MysteryFlipView"
-                  ItemTemplate="{StaticResource MysteryTemplate}"
-                  ManipulationMode="None"
-                  PointerPressed="MysteryFlipView_PointerPressed"
-                  SelectionChanged="MysteryFlipView_SelectionChanged"
-                  UseTouchAnimationsForAllNavigation="True"
-                  Tapped="FlipView_Tapped" />
+        <ContentControl x:Name="MysteryContent"
+                        ContentTemplate="{StaticResource MysteryTemplate}"
+                        Tapped="FlipView_Tapped" />
 
         <Grid x:Name="TopOverlayGrid"
               VerticalAlignment="Top"

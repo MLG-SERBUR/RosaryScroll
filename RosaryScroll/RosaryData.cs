@@ -15,7 +15,7 @@ namespace RosaryScroll
         public string SetName { get; set; }
         public List<RosaryImage> Images { get; set; }
         public List<RosaryImage> LoopingImages { get; set; }
-        private int _activeImageIndex = 0;
+        private int _activeImageIndex = 1;
         public int ActiveImageIndex
         {
             get { return _activeImageIndex; }
@@ -114,11 +114,9 @@ namespace RosaryScroll
                 });
             }
 
+            mystery.LoopingImages.Add(mystery.Images[mystery.Images.Count - 1]);
             mystery.LoopingImages.AddRange(mystery.Images);
-            if (mystery.Images.Count > 1)
-            {
-                mystery.LoopingImages.Add(mystery.Images[0]);
-            }
+            mystery.LoopingImages.Add(mystery.Images[0]);
 
             mysteries.Add(mystery);
         }

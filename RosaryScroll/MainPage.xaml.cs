@@ -127,20 +127,6 @@ namespace RosaryScroll
             ShowMystery(nextIndex);
         }
 
-        private void MysteryFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (MysteryFlipView.SelectedIndex >= 0)
-            {
-                _currentMysteryIndex = MysteryFlipView.SelectedIndex;
-                UpdateHeader();
-            }
-        }
-
-        private void MysteryFlipView_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            MysteryFlipView.CancelDirectManipulations();
-        }
-
         private void MysteryImageFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var imageFlipView = sender as FlipView;
@@ -150,10 +136,15 @@ namespace RosaryScroll
                 return;
             }
 
-            if (imageFlipView.SelectedIndex >= mystery.Images.Count)
+            if (imageFlipView.SelectedIndex == 0)
             {
-                mystery.ActiveImageIndex = 0;
-                imageFlipView.SelectedIndex = 0;
+                mystery.ActiveImageIndex = mystery.Images.Count;
+                imageFlipView.SelectedIndex = mystery.ActiveImageIndex;
+            }
+            else if (imageFlipView.SelectedIndex > mystery.Images.Count)
+            {
+                mystery.ActiveImageIndex = 1;
+                imageFlipView.SelectedIndex = mystery.ActiveImageIndex;
             }
         }
 
@@ -176,8 +167,7 @@ namespace RosaryScroll
         {
             _currentSetMysteries = _mysteries.FindAll(m => m.SetName == setName);
             _currentMysteryIndex = 0;
-            MysteryFlipView.ItemsSource = _currentSetMysteries;
-            MysteryFlipView.SelectedIndex = _currentSetMysteries.Count > 0 ? 0 : -1;
+            MysteryContent.Content = _currentSetMysteries.Count > 0 ? _currentSetMysteries[0] : null;
             UpdateHeader();
         }
 
@@ -189,7 +179,7 @@ namespace RosaryScroll
             }
 
             _currentMysteryIndex = index;
-            MysteryFlipView.SelectedIndex = index;
+            MysteryContent.Content = _currentSetMysteries[index];
             UpdateHeader();
         }
     }
